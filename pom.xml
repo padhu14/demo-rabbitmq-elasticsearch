@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>demo-rabbitMQ-connect-elasticsearch</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <google-guice.version>5.0.1</google-guice.version>
+        <tfc.microservice.version>2.0.6</tfc.microservice.version>
+        <ddd-test-support>1.0.6</ddd-test-support>
+        <tfc-sdk-version>1.0.32</tfc-sdk-version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>iterations</id>
+            <name>Iterations</name>
+            <url>http://foslsvap01p.corp.life:8081/nexus/content/repositories/iterations</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <name>Snapshots</name>
+            <url>http://foslsvap01p.corp.life:8081/nexus/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>com.lifetech</id>
+            <url>http://foslsvap01p.corp.life:8081/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>com.apldbio</id>
+            <url>http://foslsvap01p.corp.life:8081/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.thermofisher.cloud</groupId>
+            <artifactId>tfc-micro-service-base</artifactId>
+            <version>${tfc.microservice.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thermofisher.cloud</groupId>
+            <artifactId>ddd-test-support</artifactId>
+            <version>${ddd-test-support}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.thermofisher.cloud</groupId>
+            <artifactId>tfc-sdk-java-amp</artifactId>
+            <version>${tfc-sdk-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.thermofisher.cloud</groupId>
+            <artifactId>tfc-sdk-java-jaxrs</artifactId>
+            <version>${tfc-sdk-version}</version>
+        </dependency>
+
+
+        <!-- Google -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${google-guice.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-multibindings</artifactId>
+            <version>4.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice-parent</artifactId>
+            <version>${google-guice.version}</version>
+            <type>pom</type>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>5.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>iterations</id>
+            <name>Iterations</name>
+            <url>http://foslsvap01p.corp.life:8081/nexus/content/repositories/iterations</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Snapshots</name>
+            <url>http://foslsvap01p.corp.life:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>com.rabbitmq.guice.Launcher</Main-Class>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

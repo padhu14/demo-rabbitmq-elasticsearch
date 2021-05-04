@@ -1,0 +1,69 @@
+version: '3.3'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    healthcheck:
+      test: "exit 0"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.12.0
+    container_name: logstash
+    ports:
+      - 9600:9600
+    volumes:
+      - ./logstash/logstash_delete.conf:/etc/logstash/conf.d/logstash.conf
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+    environment:
+      LS_JAVA_OPTS: "-Xms512m -Xmx1g"
+      discovery.type: "single-node"
+    command:
+      - bash
+      - -c
+      - |
+        echo "Prepare logstash file"
+        logstash -f /etc/logstash/conf.d/logstash.conf --config.reload.automatic
+        sleep infinity
+    healthcheck:
+      test: "exit 0"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      discovery.type: "single-node"
+      node.store.allow_mmap: "false"
+    healthcheck:
+      test: "exit 0"
+
+#  demo-rabbit:
+#    image: demo-rabbit
+#    build: .
+#    restart: always
+#    container_name: RabbitMQ-Java
+#    depends_on:
+#      - rabbitmq
+#    ports:
+#      - 8080:8080
+#    environment:
+#      RABBITMQ_HOST: rabbitmq
+#      RABBITMQ_PORT: 5672
+#      RABBITMQ_USERNAME: guest
+#      RABBITMQ_PWD: guest
+#      RABBITMQ_VIRTUALHOST: /
+#      LTAS_SERVICE_NAME: DHAP_GM_SVC
+#    healthcheck:
+#      test: "exit 0"
